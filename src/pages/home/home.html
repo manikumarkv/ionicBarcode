@@ -1,20 +1,26 @@
 <ion-header>
-  <ion-navbar>    
-    <ion-title>Sacn Your VIN</ion-title>
+  <ion-navbar>
+    <ion-title>VIN Information</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
   <button ion-button full large (click)="scan()">scan vin</button>
+  <ion-list-header *ngIf="barCodeData.text !== null">
+    <label class="no-margin text-bold">VIN number</label>
+    <div>{{barCodeData.text}}</div>
+  </ion-list-header>
 
-  <ion-list *ngIf="data.length > 0">
+  <ion-list *ngIf="barCodeData.text !== null">
     <ion-list-header>
       Vehicle Information
     </ion-list-header>
     <ion-item *ngFor="let item of data">
-      <h3>{{item.Variable  }}</h3>
-      <div>{{item.Value !== null ? item.Value : 'NA'}}</div>
+      <label class="no-margin text-bold">{{item.Variable }}</label>
+      <div>{{item.Value !== null ? item.Value : 'Not Found'}}</div>
+    </ion-item>
+    <ion-item style="text-align: center" *ngIf="data.length == 0">
+      Vehicle Information Not found
     </ion-item>
   </ion-list>
-
 </ion-content>

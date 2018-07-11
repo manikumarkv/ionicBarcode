@@ -5,12 +5,15 @@ import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "page-home",
-  templateUrl: "home.html"
+  templateUrl: "home.html",
 })
 export class HomePage {
-  barCodeData = null;
+  barCodeData = {
+    text: null
+  };
   data: Array<any> = [];
   testData: string = "";
+  loading: any = null;
   constructor(
     public navCtrl: NavController,
     private barcodeScanner: BarcodeScanner,
@@ -23,21 +26,22 @@ export class HomePage {
       .then(barcodeData => {
         this.barCodeData = barcodeData;
         console.log(JSON.stringify(barcodeData));
-        let loading = this.loadingCtrl.create({
-          content: "Loading VIN Info..."
+        this.loading = this.loadingCtrl.create({
+          content: "Loading VIN Info...",
+          enableBackdropDismiss: true
         });
-        loading.present();
+        this.loading.present();
         this.getVehicleDetails(barcodeData.text).subscribe(response => {
-          loading.dismiss();
+          this.loading.dismiss();
           console.log("success");
-          this.testData = JSON.stringify(response);
-          
-          this.data = this.filterResponse(response); /// TS_IGNORE
+          this.testData = JSON.stringify(response);          
+          this.data = this.filterResponse(response);
         });
       })
       .catch(err => {
         this.data = [];
-        alert("something went wrong. Please try again");
+        this.loading.dismiss();
+        alert("something went wrong. Please try again");        
       });
   }
   geturl(vinNumber) {

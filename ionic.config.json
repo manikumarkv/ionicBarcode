@@ -1,6 +1,6 @@
 {
-  "name": "barCodeScanner",
-  "app_id": "",
+  "name": "VIN Search",
+  "app_id": "com.app.barcodescanner",
   "type": "ionic-angular",
   "integrations": {
     "cordova": {}
