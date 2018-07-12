@@ -5,7 +5,7 @@ import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "page-home",
-  templateUrl: "home.html",
+  templateUrl: "home.html"
 })
 export class HomePage {
   barCodeData = {
@@ -21,27 +21,29 @@ export class HomePage {
     public loadingCtrl: LoadingController
   ) {}
   scan() {
+    
     this.barcodeScanner
       .scan()
       .then(barcodeData => {
-        this.barCodeData = barcodeData;
-        console.log(JSON.stringify(barcodeData));
+        if(barcodeData.cancelled) {
+          return;
+        }
         this.loading = this.loadingCtrl.create({
           content: "Loading VIN Info...",
           enableBackdropDismiss: true
         });
         this.loading.present();
-        this.getVehicleDetails(barcodeData.text).subscribe(response => {
+        const filteredBarcode = this.filterBarCode(barcodeData.text)
+        this.barCodeData = filteredBarcode;
+        this.getVehicleDetails(filteredBarcode).subscribe(response => {
           this.loading.dismiss();
-          console.log("success");
-          this.testData = JSON.stringify(response);          
           this.data = this.filterResponse(response);
         });
       })
       .catch(err => {
         this.data = [];
         this.loading.dismiss();
-        alert("something went wrong. Please try again");        
+        alert("something went wrong. Please try again");
       });
   }
   geturl(vinNumber) {
@@ -65,5 +67,18 @@ export class HomePage {
     });
     console.log(JSON.stringify(resultData));
     return resultData;
+  }
+  filterBarCode(barCodetext) {
+    if (barCodetext.length == 17) {
+    } else if (barCodetext.length == 18) {
+      barCodetext = barCodetext.slice(1);
+    } else if (barCodetext.length == 19) {
+      barCodetext = barCodetext.slice(1);
+      barCodetext = barCodetext.slice(0, -1);
+    } else if (barCodetext.length == 20) {
+      barCodetext = barCodetext.slice(2);
+      barCodetext = barCodetext.slice(0, -1);
+    }
+    return barCodetext;
   }
 }

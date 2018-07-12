@@ -5,3 +5,12 @@
 .text-bold {
     font-weight: bold; 
 }
+
+.imageClass {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .vam_logo {
+        width: 160px;
+    }
+}

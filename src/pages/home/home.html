@@ -1,14 +1,40 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>VIN Information</ion-title>
+    <ion-title>ValueMomentum (POC)</ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  <button ion-button full large (click)="scan()">scan vin</button>
+
+
+  <ion-card>
+
+    <div class="imageClass">
+      <img class="vam_logo" src="https://www.valuemomentum.com/wp-content/uploads/2016/12/ValueMomentum-logo.png" />
+      <!-- <img class="vam_logo" src="VAM_logo.png" /> -->
+    </div>
+
+    <ion-card-content>
+      <ion-card-title>
+        VIN Scanner (POC)
+      </ion-card-title>
+      <p>
+        You can scan your VIN number and verify your Vehicle details
+      </p>
+    </ion-card-content>
+    <ion-row no-padding>
+      <ion-col>
+        <button ion-button full (click)="scan()">
+            <ion-icon name="qr-scanner"></ion-icon>
+           <span>&nbsp; &nbsp; Scan VIN</span> </button>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+
+  <!-- <button ion-button full large (click)="scan()">scan vin</button> -->
   <ion-list-header *ngIf="barCodeData.text !== null">
     <label class="no-margin text-bold">VIN number</label>
-    <div>{{barCodeData.text}}</div>
+    <div>{{barCodeData}}</div>
   </ion-list-header>
 
   <ion-list *ngIf="barCodeData.text !== null">
@@ -24,3 +50,8 @@
     </ion-item>
   </ion-list>
 </ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <span>2018 © Copyright ValueMomentum</span>
+  </ion-toolbar>
+</ion-footer>
