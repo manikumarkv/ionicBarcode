@@ -42,7 +42,7 @@ export class HomePage {
       })
       .catch(err => {
         this.data = [];
-        this.loading.dismiss();
+        //this.loading.dismiss();
         alert("something went wrong. Please try again");
       });
   }
