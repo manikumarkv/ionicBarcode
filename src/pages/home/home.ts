@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { NavController, LoadingController } from "ionic-angular";
+import { NavController, LoadingController, ToastController } from "ionic-angular";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { HttpClient } from "@angular/common/http";
 
@@ -14,11 +14,13 @@ export class HomePage {
   data: Array<any> = [];
   testData: string = "";
   loading: any = null;
+  vinRawResponse: any = {};
   constructor(
     public navCtrl: NavController,
     private barcodeScanner: BarcodeScanner,
     private http: HttpClient,
-    public loadingCtrl: LoadingController
+    public loadingCtrl: LoadingController,
+    public toastCtrl: ToastController
   ) {}
   scan() {
     
@@ -38,6 +40,7 @@ export class HomePage {
         this.getVehicleDetails(filteredBarcode).subscribe(response => {
           this.loading.dismiss();
           this.data = this.filterResponse(response);
+          this.vinRawResponse = response;
         });
       })
       .catch(err => {
@@ -57,6 +60,11 @@ export class HomePage {
     const url = this.geturl(vinNumber);
     console.log(url);
     return this.http.get(url);
+  }
+  saveInfo(vinInfo) {
+    const url = 'https://680zjdkcvd.execute-api.us-east-1.amazonaws.com/latest/poc';
+    const body = vinInfo.Results;
+    return this.http.post(url,body);
   }
   filterResponse(result) {
     console.log("result in");
@@ -80,5 +88,28 @@ export class HomePage {
       barCodetext = barCodetext.slice(0, -1);
     }
     return barCodetext;
+  }
+
+  save() {
+    this.loading = this.loadingCtrl.create({
+      content: "Saving VIN Info...",
+      enableBackdropDismiss: true
+    });
+    this.loading.present();
+    this.saveInfo(this.vinRawResponse).subscribe(
+      response => {
+      this.loading.dismiss();
+      this.vinRawResponse = {};
+      this.data =[];
+      this.barCodeData = {text: null}
+      const toast = this.toastCtrl.create({
+        message: 'VIN Information saved successfully',
+        duration: 3000
+      });
+      toast.present();
+    },
+    err => {
+      this.loading.dismiss();
+    })
   }
 }
