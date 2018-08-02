@@ -2,7 +2,7 @@
 <widget id="com.valuemomentum.vinscanner" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>VIN Scanner</name>
     <description>VIN Scanner App</description>
-    <author email="manikumar.kanamarlapudi@valuemomentum.biz" href="http://ionicframework.com/">Valuemomentum Dev Team</author>
+    <author email="manikumar.kanamarlapudi@valuemomentum.biz" href="www.valuemomentum.com">Valuemomentum Dev Team</author>
     <content src="index.html" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
