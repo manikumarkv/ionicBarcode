@@ -10,7 +10,7 @@
   <ion-card>
 
     <div class="imageClass">     
-      <img width="180" height="80" src="assets/imgs/VAM_logo.png">
+      <ion-img width="200" height="100" style="padding: 20px; margin: 10px" src="assets/imgs/VAM_logo.png"></ion-img>
     </div>
 
     <ion-card-content>
@@ -48,9 +48,17 @@
       Vehicle Information Not found
     </ion-item>
     <ion-item>
-      <button ion-button full (click)="save()">
-        <ion-icon name="qr-scanner"></ion-icon>
-       <span>&nbsp; &nbsp; Save this Information</span> </button>
+      <!-- <button ion-button full (click)="save()">
+        <ion-icon name="cloud-upload"></ion-icon>
+       <span>&nbsp; &nbsp; Save this Information</span> </button> -->
+
+       <ion-row no-padding>
+        <ion-col>
+          <button ion-button full (click)="save()">
+              <ion-icon name="cloud-upload"></ion-icon>
+             <span>&nbsp; &nbsp; Save this Information</span> </button>
+        </ion-col>
+      </ion-row>
     </ion-item>
   </ion-list>
 </ion-content>

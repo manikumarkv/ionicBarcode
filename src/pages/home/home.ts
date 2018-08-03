@@ -1,5 +1,9 @@
 import { Component } from "@angular/core";
-import { NavController, LoadingController, ToastController } from "ionic-angular";
+import {
+  NavController,
+  LoadingController,
+  ToastController
+} from "ionic-angular";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { HttpClient } from "@angular/common/http";
 
@@ -23,11 +27,10 @@ export class HomePage {
     public toastCtrl: ToastController
   ) {}
   scan() {
-    
     this.barcodeScanner
       .scan()
       .then(barcodeData => {
-        if(barcodeData.cancelled) {
+        if (barcodeData.cancelled) {
           return;
         }
         this.loading = this.loadingCtrl.create({
@@ -35,7 +38,7 @@ export class HomePage {
           enableBackdropDismiss: true
         });
         this.loading.present();
-        const filteredBarcode = this.filterBarCode(barcodeData.text)
+        const filteredBarcode = this.filterBarCode(barcodeData.text);
         this.barCodeData = filteredBarcode;
         this.getVehicleDetails(filteredBarcode).subscribe(response => {
           this.loading.dismiss();
@@ -62,9 +65,27 @@ export class HomePage {
     return this.http.get(url);
   }
   saveInfo(vinInfo) {
-    const url = 'https://680zjdkcvd.execute-api.us-east-1.amazonaws.com/latest/poc';
-    const body = vinInfo.Results;
-    return this.http.post(url,body);
+    // const url = 'https://680zjdkcvd.execute-api.us-east-1.amazonaws.com/latest/poc';
+    const url =
+      "https://680zjdkcvd.execute-api.us-east-1.amazonaws.com/latest/poc/post";
+      vinInfo.Results.map(vin=> {
+        if(vin.Value == ''){
+          vin.Value = null
+        }
+        if(vin.ValueId == ''){
+          vin.ValueId = null
+        }
+        if(vin.Variable == ''){
+          vin.Variable = null
+        }
+        if(vin.VariableId == ''){
+          vin.VariableId = null
+        }
+      })
+    const body = {
+      'data': vinInfo
+    };
+    return this.http.post(url, body);
   }
   filterResponse(result) {
     console.log("result in");
@@ -98,18 +119,20 @@ export class HomePage {
     this.loading.present();
     this.saveInfo(this.vinRawResponse).subscribe(
       response => {
-      this.loading.dismiss();
-      this.vinRawResponse = {};
-      this.data =[];
-      this.barCodeData = {text: null}
-      const toast = this.toastCtrl.create({
-        message: 'VIN Information saved successfully',
-        duration: 3000
-      });
-      toast.present();
-    },
-    err => {
-      this.loading.dismiss();
-    })
+        this.loading.dismiss();
+        this.vinRawResponse = {};
+        this.data = [];
+        this.barCodeData = { text: null };
+        const toast = this.toastCtrl.create({
+          message: "VIN Information saved successfully",
+          duration: 3000
+        });
+        toast.present();
+      },
+      err => {
+        this.loading.dismiss();
+        alert(err.message);
+      }
+    );
   }
 }
