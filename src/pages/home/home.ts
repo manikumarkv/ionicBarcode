@@ -2,11 +2,13 @@ import { Component } from "@angular/core";
 import {
   NavController,
   LoadingController,
-  ToastController
+  ToastController,
+  // NavParams
 } from "ionic-angular";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { HttpClient } from "@angular/common/http";
-
+// import { FundingPage } from './funding/funding';
+import { FundingPage } from '../funding/funding';
 @Component({
   selector: "page-home",
   templateUrl: "home.html"
@@ -128,11 +130,17 @@ export class HomePage {
           duration: 3000
         });
         toast.present();
+        this.navigateToFunding();
       },
       err => {
         this.loading.dismiss();
         alert(err.message);
       }
     );
+   }
+
+  navigateToFunding() {
+    //alert(1)
+    this.navCtrl.push(FundingPage)
   }
 }

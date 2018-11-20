@@ -9,7 +9,7 @@
 
   <ion-card>
 
-    <div class="imageClass">     
+    <div class="imageClass">
       <ion-img width="200" height="100" style="padding: 20px; margin: 10px" src="assets/imgs/VAM_logo.png"></ion-img>
     </div>
 
@@ -24,8 +24,9 @@
     <ion-row no-padding>
       <ion-col>
         <button ion-button full (click)="scan()">
-            <ion-icon name="qr-scanner"></ion-icon>
-           <span>&nbsp; &nbsp; Scan VIN</span> </button>
+          <ion-icon name="qr-scanner"></ion-icon>
+          <span>&nbsp; &nbsp; Scan VIN</span>
+        </button>
       </ion-col>
     </ion-row>
   </ion-card>
@@ -37,6 +38,7 @@
   </ion-list-header>
 
   <ion-list *ngIf="barCodeData.text !== null">
+  <!-- <ion-list> -->
     <ion-list-header>
       Vehicle Information
     </ion-list-header>
@@ -47,16 +49,27 @@
     <ion-item style="text-align: center" *ngIf="data.length == 0">
       Vehicle Information Not found
     </ion-item>
+    <div class="save-btn-info">
+        <strong>You want to add this vehicle in your existing policy?</strong>
+    </div>
     <ion-item>
       <!-- <button ion-button full (click)="save()">
         <ion-icon name="cloud-upload"></ion-icon>
        <span>&nbsp; &nbsp; Save this Information</span> </button> -->
-
-       <ion-row no-padding>
+      <ion-row>
+        <ion-col>
+          <!-- <div>
+              <strong>you want to add this vehicle in your existing policy?</strong>
+          </div> -->
+          
+        </ion-col>
+      </ion-row>
+      <ion-row no-padding>
         <ion-col>
           <button ion-button full (click)="save()">
-              <ion-icon name="cloud-upload"></ion-icon>
-             <span>&nbsp; &nbsp; Save this Information</span> </button>
+            <!-- <ion-icon name="cloud-upload"></ion-icon> -->
+            <span> Yes</span>
+          </button>
         </ion-col>
       </ion-row>
     </ion-item>
