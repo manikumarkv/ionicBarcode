@@ -6,6 +6,7 @@ import {
   // NavParams
 } from "ionic-angular";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
+import { Camera, CameraOptions } from '@ionic-native/camera';
 import { HttpClient } from "@angular/common/http";
 // import { FundingPage } from './funding/funding';
 import { FundingPage } from '../funding/funding';
@@ -26,7 +27,8 @@ export class HomePage {
     private barcodeScanner: BarcodeScanner,
     private http: HttpClient,
     public loadingCtrl: LoadingController,
-    public toastCtrl: ToastController
+    public toastCtrl: ToastController,
+    private camera: Camera
   ) {}
   scan() {
     this.barcodeScanner
@@ -142,5 +144,27 @@ export class HomePage {
   navigateToFunding() {
     //alert(1)
     this.navCtrl.push(FundingPage)
+  }
+
+  capture() {
+    const options: CameraOptions = {
+      quality: 100,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE
+    }
+    this.camera.getPicture(options).then((imageData) => {
+      // imageData is either a base64 encoded string or a file URI
+      // If it's base64 (DATA_URL):
+      let base64Image = 'data:image/jpeg;base64,' + imageData;
+      const toast = this.toastCtrl.create({
+        message: "Created image",
+        duration: 3000
+      });
+      toast.present();
+     }, (err) => {
+      // Handle error
+     });
+
   }
 }
