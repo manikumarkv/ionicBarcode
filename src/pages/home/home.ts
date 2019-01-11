@@ -2,21 +2,21 @@ import { Component } from "@angular/core";
 import {
   NavController,
   LoadingController,
-  ToastController,
+  ToastController
   // NavParams
 } from "ionic-angular";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
-import { Camera, CameraOptions } from '@ionic-native/camera';
+import { Camera, CameraOptions } from "@ionic-native/camera";
 import { HttpClient } from "@angular/common/http";
 // import { FundingPage } from './funding/funding';
-import { FundingPage } from '../funding/funding';
+import { FundingPage } from "../funding/funding";
 import { ImageProcessService } from "../../app/services/imageprocess.service";
 @Component({
   selector: "page-home",
   templateUrl: "home.html"
 })
 export class HomePage {
-  barCodeData = null
+  barCodeData = null;
   data: Array<any> = [];
   testData: string = "";
   loading: any = null;
@@ -72,22 +72,22 @@ export class HomePage {
     // const url = 'https://680zjdkcvd.execute-api.us-east-1.amazonaws.com/latest/poc';
     const url =
       "https://680zjdkcvd.execute-api.us-east-1.amazonaws.com/latest/poc/post";
-      vinInfo.Results.map(vin=> {
-        if(vin.Value == ''){
-          vin.Value = null
-        }
-        if(vin.ValueId == ''){
-          vin.ValueId = null
-        }
-        if(vin.Variable == ''){
-          vin.Variable = null
-        }
-        if(vin.VariableId == ''){
-          vin.VariableId = null
-        }
-      })
+    vinInfo.Results.map(vin => {
+      if (vin.Value == "") {
+        vin.Value = null;
+      }
+      if (vin.ValueId == "") {
+        vin.ValueId = null;
+      }
+      if (vin.Variable == "") {
+        vin.Variable = null;
+      }
+      if (vin.VariableId == "") {
+        vin.VariableId = null;
+      }
+    });
     const body = {
-      'data': vinInfo
+      data: vinInfo
     };
     return this.http.post(url, body);
   }
@@ -139,44 +139,55 @@ export class HomePage {
         alert(err.message);
       }
     );
-   }
+  }
 
   navigateToFunding() {
     //alert(1)
-    this.navCtrl.push(FundingPage)
+    this.navCtrl.push(FundingPage);
   }
 
   capture() {
+    this.data = [];
+    this.vinRawResponse = null;
+    this.barCodeData = null;
     const options: CameraOptions = {
       quality: 50,
       destinationType: this.camera.DestinationType.DATA_URL,
       encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE
-    }
-    this.camera.getPicture(options).then((imageData) => {
-      this.loading = this.loadingCtrl.create({
-        content: "Loading VIN Info...",
-        enableBackdropDismiss: true
-      });
-      this.loading.present();
-      this.imageProcessService.getVinNumber(imageData).subscribe(succ => {
-        this.barCodeData = succ;
-        this.getVehicleDetails(succ).subscribe(response => {
-          this.loading.dismiss();
-          this.data = this.filterResponse(response);
-          this.vinRawResponse = response;
-        }, err=> {
-          alert('Details Not Found')
-          this.loading.dismiss()
+    };
+    this.camera.getPicture(options).then(
+      imageData => {
+        this.loading = this.loadingCtrl.create({
+          content: "Loading VIN Info...",
+          enableBackdropDismiss: true
         });
-
-      },err=> {
-        alert('Captured image might not have proper VIN Number')
-        this.loading.dismiss()
-      })
-     }, (err) => {
-      // Handle error
-     });
-
+        this.loading.present();
+        this.imageProcessService.getVinNumber(imageData).subscribe(
+          succ => {
+            this.barCodeData = succ;
+            this.getVehicleDetails(succ).subscribe(
+              response => {
+                this.loading.dismiss();
+                this.data = this.filterResponse(response);
+                this.vinRawResponse = response;
+              },
+              err => {
+                alert("Details Not Found");
+                this.loading.dismiss();
+              }
+            );
+          },
+          err => {
+            alert(JSON.stringify(err))
+            alert("Captured image might not have proper VIN Number");
+            this.loading.dismiss();
+          }
+        );
+      },
+      err => {
+        // Handle error
+      }
+    );
   }
 }

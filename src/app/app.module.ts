@@ -3,6 +3,7 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { Camera } from '@ionic-native/camera';
+import { HTTP } from '@ionic-native/http';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -40,6 +41,7 @@ import { ImageProcessService } from '../app/services/imageprocess.service'
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     BarcodeScanner,
     Camera,
+    HTTP,
     ImageProcessService
   ]
 })
