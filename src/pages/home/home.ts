@@ -10,14 +10,13 @@ import { Camera, CameraOptions } from '@ionic-native/camera';
 import { HttpClient } from "@angular/common/http";
 // import { FundingPage } from './funding/funding';
 import { FundingPage } from '../funding/funding';
+import { ImageProcessService } from "../../app/services/imageprocess.service";
 @Component({
   selector: "page-home",
   templateUrl: "home.html"
 })
 export class HomePage {
-  barCodeData = {
-    text: null
-  };
+  barCodeData = null
   data: Array<any> = [];
   testData: string = "";
   loading: any = null;
@@ -28,7 +27,8 @@ export class HomePage {
     private http: HttpClient,
     public loadingCtrl: LoadingController,
     public toastCtrl: ToastController,
-    private camera: Camera
+    private camera: Camera,
+    public imageProcessService: ImageProcessService
   ) {}
   scan() {
     this.barcodeScanner
@@ -126,7 +126,7 @@ export class HomePage {
         this.loading.dismiss();
         this.vinRawResponse = {};
         this.data = [];
-        this.barCodeData = { text: null };
+        this.barCodeData = null;
         const toast = this.toastCtrl.create({
           message: "VIN Information saved successfully",
           duration: 3000
@@ -148,20 +148,32 @@ export class HomePage {
 
   capture() {
     const options: CameraOptions = {
-      quality: 100,
+      quality: 50,
       destinationType: this.camera.DestinationType.DATA_URL,
       encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE
     }
     this.camera.getPicture(options).then((imageData) => {
-      // imageData is either a base64 encoded string or a file URI
-      // If it's base64 (DATA_URL):
-      let base64Image = 'data:image/jpeg;base64,' + imageData;
-      const toast = this.toastCtrl.create({
-        message: "Created image",
-        duration: 3000
+      this.loading = this.loadingCtrl.create({
+        content: "Loading VIN Info...",
+        enableBackdropDismiss: true
       });
-      toast.present();
+      this.loading.present();
+      this.imageProcessService.getVinNumber(imageData).subscribe(succ => {
+        this.barCodeData = succ;
+        this.getVehicleDetails(succ).subscribe(response => {
+          this.loading.dismiss();
+          this.data = this.filterResponse(response);
+          this.vinRawResponse = response;
+        }, err=> {
+          alert('Details Not Found')
+          this.loading.dismiss()
+        });
+
+      },err=> {
+        alert('Captured image might not have proper VIN Number')
+        this.loading.dismiss()
+      })
      }, (err) => {
       // Handle error
      });

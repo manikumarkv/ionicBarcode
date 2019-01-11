@@ -12,6 +12,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { HttpClientModule } from '@angular/common/http';
 import { FundingPage } from '../pages/funding/funding';
+import { ImageProcessService } from '../app/services/imageprocess.service'
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { FundingPage } from '../pages/funding/funding';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     BarcodeScanner,
     Camera,
+    ImageProcessService
   ]
 })
 export class AppModule {}
