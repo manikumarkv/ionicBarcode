@@ -3,14 +3,15 @@ import {
   NavController,
   LoadingController,
   ToastController
-  // NavParams
 } from "ionic-angular";
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { Camera, CameraOptions } from "@ionic-native/camera";
 import { HttpClient } from "@angular/common/http";
-// import { FundingPage } from './funding/funding';
 import { FundingPage } from "../funding/funding";
 import { ImageProcessService } from "../../app/services/imageprocess.service";
+// import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
+// import { File } from '@ionic-native/file';
+import b64toBlob from "b64-to-blob";
 @Component({
   selector: "page-home",
   templateUrl: "home.html"
@@ -151,7 +152,42 @@ export class HomePage {
     this.vinRawResponse = null;
     this.barCodeData = null;
     const options: CameraOptions = {
-      quality: 50,
+      quality: 80,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.PNG,
+      mediaType: this.camera.MediaType.PICTURE
+    };
+    this.camera.getPicture(options).then(
+      imageData => {
+        this.loading = this.loadingCtrl.create({
+          content: "Loading VIN Info...",
+          enableBackdropDismiss: true
+        });
+        this.loading.present();
+        const data = b64toBlob(imageData, "image/png");
+        var form = new FormData();
+        form.append("recfile", data);
+        this.imageProcessService.getVinNumberByImage(form).subscribe(
+          succ => {
+            alert("succ");
+          },
+          err => {
+            alert(JSON.stringify(err));
+          }
+        );
+      },
+      err => {
+        // Handle error
+      }
+    );
+  }
+
+  capture2() {
+    this.data = [];
+    this.vinRawResponse = null;
+    this.barCodeData = null;
+    const options: CameraOptions = {
+      quality: 60,
       destinationType: this.camera.DestinationType.DATA_URL,
       encodingType: this.camera.EncodingType.JPEG,
       mediaType: this.camera.MediaType.PICTURE
@@ -163,6 +199,7 @@ export class HomePage {
           enableBackdropDismiss: true
         });
         this.loading.present();
+
         this.imageProcessService.getVinNumber(imageData).subscribe(
           succ => {
             this.barCodeData = succ;
@@ -179,11 +216,36 @@ export class HomePage {
             );
           },
           err => {
-            alert(JSON.stringify(err))
+            alert(JSON.stringify(err));
             alert("Captured image might not have proper VIN Number");
             this.loading.dismiss();
           }
         );
+      },
+      err => {
+        // Handle error
+      }
+    );
+  }
+
+  capture3() {
+    this.data = [];
+    this.vinRawResponse = null;
+    this.barCodeData = null;
+    const options: CameraOptions = {
+      quality: 20,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE
+    };
+    this.camera.getPicture(options).then(
+      imageData => {
+        this.loading = this.loadingCtrl.create({
+          content: "Loading VIN Info...",
+          enableBackdropDismiss: true
+        });
+        this.loading.present();
+        const data = this.imageProcessService.getVin2(imageData);
       },
       err => {
         // Handle error
