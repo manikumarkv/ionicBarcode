@@ -11,7 +11,7 @@ import { FundingPage } from "../funding/funding";
 import { ImageProcessService } from "../../app/services/imageprocess.service";
 // import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer/ngx';
 // import { File } from '@ionic-native/file';
-import b64toBlob from "b64-to-blob";
+// import b64toBlob from "b64-to-blob";
 @Component({
   selector: "page-home",
   templateUrl: "home.html"
@@ -152,10 +152,12 @@ export class HomePage {
     this.vinRawResponse = null;
     this.barCodeData = null;
     const options: CameraOptions = {
-      quality: 80,
+      quality: 60,
       destinationType: this.camera.DestinationType.DATA_URL,
       encodingType: this.camera.EncodingType.PNG,
-      mediaType: this.camera.MediaType.PICTURE
+      mediaType: this.camera.MediaType.PICTURE,
+      targetWidth: 100,
+      targetHeight:100
     };
     this.camera.getPicture(options).then(
       imageData => {
@@ -164,20 +166,36 @@ export class HomePage {
           enableBackdropDismiss: true
         });
         this.loading.present();
-        const data = b64toBlob(imageData, "image/png");
-        var form = new FormData();
-        form.append("recfile", data);
-        this.imageProcessService.getVinNumberByImage(form).subscribe(
+       
+        this.imageProcessService.getVinNumberByImage(imageData).subscribe(
           succ => {
-            alert("succ");
+            //console.log(JSON.stringify(succ))
+           // alert(JSON.stringify(succ));
+           
+            const result = this.imageProcessService.getVin(succ);
+            this.barCodeData = result;
+            this.getVehicleDetails(result).subscribe(
+              response => {
+                this.loading.dismiss();
+                this.data = this.filterResponse(response);
+                this.vinRawResponse = response;
+              },
+              err => {
+                alert("Details Not Found");
+                this.loading.dismiss();
+              }
+            );
           },
           err => {
-            alert(JSON.stringify(err));
+            console.warn(JSON.stringify(err))
+            //alert(JSON.stringify(err));
+            this.loading.dismiss();
           }
         );
       },
       err => {
         // Handle error
+        // this.loading.dismiss();
       }
     );
   }
@@ -187,10 +205,13 @@ export class HomePage {
     this.vinRawResponse = null;
     this.barCodeData = null;
     const options: CameraOptions = {
-      quality: 60,
+      quality: 50,
       destinationType: this.camera.DestinationType.DATA_URL,
       encodingType: this.camera.EncodingType.JPEG,
-      mediaType: this.camera.MediaType.PICTURE
+      mediaType: this.camera.MediaType.PICTURE,
+      //targetWidth: 100,
+      //targetHeight:50
+
     };
     this.camera.getPicture(options).then(
       imageData => {

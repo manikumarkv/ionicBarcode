@@ -3,7 +3,7 @@ import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 import { BarcodeScanner } from "@ionic-native/barcode-scanner";
 import { Camera } from '@ionic-native/camera';
-import { HTTP } from '@ionic-native/http';
+//import { HTTP } from '@ionic-native/http';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -13,7 +13,8 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { HttpClientModule } from '@angular/common/http';
 import { FundingPage } from '../pages/funding/funding';
-import { ImageProcessService } from '../app/services/imageprocess.service'
+import { ImageProcessService } from '../app/services/imageprocess.service';
+// import { HTTP } from '@ionic-native/http/ngx';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { ImageProcessService } from '../app/services/imageprocess.service'
     BrowserModule,
     IonicModule.forRoot(MyApp),
     HttpClientModule,
+    //HTTP,
     
   ],
   bootstrap: [IonicApp],
@@ -41,7 +43,7 @@ import { ImageProcessService } from '../app/services/imageprocess.service'
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     BarcodeScanner,
     Camera,
-    HTTP,
+    // HTTP,
     ImageProcessService
   ]
 })

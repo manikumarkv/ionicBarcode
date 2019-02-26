@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import Rekognition  from 'node-rekognition'
+// import Rekognition  from 'node-rekognition'
+// import { HTTP } from '@ionic-native/http/ngx';
 
 @Injectable()
 export class ImageProcessService {
@@ -13,29 +14,33 @@ export class ImageProcessService {
   };
   private rekognition = null;
   constructor(public http: HttpClient) {
-    this.rekognition = new Rekognition(this.getVinNumberByImage)
+    // this.rekognition = new Rekognition(this.getVinNumberByImage)
   }
 
   getVinNumber(convertedImage: string) {
+    //convertedImage = "iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHA";
     return this.http.post(
-      "https://9see8x7od6.execute-api.us-east-2.amazonaws.com/default/ImageToVINFunction",
+      // "https://9see8x7od6.execute-api.us-east-2.amazonaws.com/default/ImageToVINFunction",
+      "https://u9vtqx0hdb.execute-api.us-east-2.amazonaws.com/default/testFunction",
       { key1: convertedImage },
       { responseType: "text" }
     );
   }
 
   getVinNumberByImage(imageData: any) {
+    //imageData =""
     const options = {
       headers: new HttpHeaders({
         Accept: "application/json",
-        "cache-control": "no-cache",
-        "Postman-Token": "b992e4d0-c2cc-4a78-bc4f-df878921ab4c"
+        "Content-Type": "application/json"
+        // "cache-control": "no-cache",
+        // "Postman-Token": "b992e4d0-c2cc-4a78-bc4f-df878921ab4c"
         // "Content-Type":
       })
     };
     return this.http.post(
-      "http://vickytripathy.in:3000/detect_text",
-      imageData,
+      "http://vickytripathy.in:3000/detect_text_encoded",
+      { file: imageData },
       options
     );
   }
@@ -48,7 +53,8 @@ export class ImageProcessService {
       responseType: "text"
     };
     return this.http.post(
-      "https://9see8x7od6.execute-api.us-east-2.amazonaws.com/default/ImageToVINFunction",
+      //"https://9see8x7od6.execute-api.us-east-2.amazonaws.com/default/ImageToVINFunction",
+      "https://u9vtqx0hdb.execute-api.us-east-2.amazonaws.com/default/testFunction",
       { key1: convertedImage },
       { responseType: "text" }
     );
@@ -61,10 +67,25 @@ export class ImageProcessService {
     for (var i = 0; i < length; i++) {
       ua[i] = image.charCodeAt(i);
     }
-    const s3Images = await this.rekognition.uploadToS3(ua, "folder")
-    const imageLabels = await this.rekognition.detectLabels(s3Images)
+    const s3Images = await this.rekognition.uploadToS3(ua, "folder");
+    const imageLabels = await this.rekognition.detectLabels(s3Images);
     return imageLabels;
   }
 
-  
+  getVin(detectedText: any) {
+    let detectedTextResult = "";
+    if (detectedText.TextDetections !== undefined) {      
+      detectedText.TextDetections.map(text => {
+        if (text.DetectedText !== '') {
+          const currencyRegex = /^[a-zA-Z0-9]{17}$/;
+          if(currencyRegex.test(text.DetectedText)){
+            detectedTextResult = text.DetectedText
+          }
+        }
+      });
+    } else {
+      return "";
+    }
+    return detectedTextResult
+  }
 }
